@@ -36,17 +36,20 @@ sequenceDiagram
 
 ## Screenshots
 
-### 1. Upload Interface & Extraction Queue
-![Upload Interface](./assets/Screenshots/upload-interface.png)
+### 5. Home Page 
+![Upload Interface](./assets/Screenshots/homepage.png)
 
-### 2. Invoices Table
-![Invoices Table](./assets/Screenshots/invoices-table.png)
+### 2. Upload Interface & Extraction Queue
+![Upload Interface](./assets/Screenshots/upload-interface-tab.png)
 
-### 3. Products Catalog
-![Products Catalog](./assets/Screenshots/products-catalog.png)
+### 3. Invoices Table
+![Invoices Table](./assets/Screenshots/invoices-tables.png)
 
-### 4. Customers Ledger (Interactive Correction UI)
-![Customers Ledger](./assets/Screenshots/customers-ledger.png)
+### 4. Products Catalog
+![Products Catalog](./assets/Screenshots/products-catalog-tabble.png)
+
+### 5. Customers Ledger (Interactive Correction UI)
+![Customers Ledger](./assets/Screenshots/customers-ledgers-table.png)
 
 ## Technology Stack
 
