@@ -89,21 +89,26 @@ export function EditableCell({
 
   // Display value nicely
   let displayValue = value !== null && value !== undefined ? String(value) : '-';
-  if (type === 'number' && typeof value === 'number') {
+  
+  if (type === 'number') {
+    const numValue = value !== null && value !== undefined ? Number(value) : 0;
+    
     if (fieldName.toLowerCase().includes('percentage') || fieldName.toLowerCase().includes('tax%')) {
-      displayValue = `${value.toFixed(1)}%`;
+      displayValue = `${numValue.toFixed(1)}%`;
     } else if (
       fieldName.toLowerCase().includes('price') ||
       fieldName.toLowerCase().includes('amount') ||
       fieldName.toLowerCase().includes('discount') ||
-      fieldName.toLowerCase().includes('net')
+      fieldName.toLowerCase().includes('net') ||
+      fieldName.toLowerCase().includes('tax') ||
+      fieldName.toLowerCase().includes('balance')
     ) {
       displayValue = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: currencyCode || 'USD',
-      }).format(value);
+      }).format(numValue);
     } else {
-      displayValue = String(value);
+      displayValue = String(numValue);
     }
   }
 

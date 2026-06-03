@@ -8,8 +8,6 @@ export function computeInvoiceMissingFields(invoice: Invoice): string[] {
     'productName',
     'quantity',
     'unitPrice',
-    'taxAmount',
-    'taxPercentage',
     'totalAmount',
     'netAmount',
     'date',
