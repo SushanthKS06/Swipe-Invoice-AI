@@ -40,7 +40,7 @@ sequenceDiagram
 ![Upload Interface](./assets/upload-interface.png)
 
 ### 2. Customers Ledger (Interactive Correction UI)
-![Customers Ledger](./assets/customers-ledger.png)
+![Customers Ledger](./assets/Screenshots/customers-ledger.png)
 
 ### 3. Products Catalog
 ![Products Catalog](./assets/products-catalog.png)
