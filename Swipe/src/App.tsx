@@ -83,6 +83,7 @@ function MainApp() {
         'Unit Price ($)': i.unitPrice === null || i.unitPrice === undefined ? "" : i.unitPrice,
         'Tax Amount ($)': i.taxAmount === null || i.taxAmount === undefined ? "" : i.taxAmount,
         'Tax Rate (%)': i.taxPercentage === null || i.taxPercentage === undefined ? "" : i.taxPercentage,
+        'Discount ($)': i.discount === null || i.discount === undefined ? "" : i.discount,
         'Net Amount ($)': i.netAmount === null || i.netAmount === undefined ? "" : i.netAmount,
         'Total Amount ($)': i.totalAmount === null || i.totalAmount === undefined ? "" : i.totalAmount,
         'Balance Due ($)': i.balanceDue === null || i.balanceDue === undefined ? "" : i.balanceDue,

@@ -171,7 +171,9 @@ export function parseGeminiResponse(
             unitPrice: inv.unit_price || null,
             tax: inv.tax_amount || null,
             taxPercentage: inv.tax_percentage || null,
-            priceWithTax: (inv.unit_price && inv.tax_amount) ? (inv.unit_price + inv.tax_amount) : null,
+            priceWithTax: (inv.unit_price && inv.tax_amount && inv.quantity)
+              ? Math.round((inv.unit_price + inv.tax_amount / inv.quantity) * 100) / 100
+              : null,
             discount: null,
             discountPercentage: null,
             missingFields: [],
@@ -209,17 +211,28 @@ export function parseGeminiResponse(
       let netAmount = inv.net_amount;
 
       // Confidence-based local inferences inside parser
+      // Net = total - tax (if discount not already baked in)
       if (netAmount === null && totalAmount !== null && taxAmount !== null) {
-        netAmount = totalAmount - taxAmount;
+        netAmount = Math.round((totalAmount - taxAmount) * 100) / 100;
+      }
+      // Net = (qty * unitPrice) - discount  — fallback when net is absent but math is knowable
+      if (netAmount === null && inv.quantity !== null && inv.quantity !== undefined && inv.unit_price !== null && inv.unit_price !== undefined) {
+        const disc = inv.discount !== null && inv.discount !== undefined ? inv.discount : 0;
+        netAmount = Math.round((inv.quantity * inv.unit_price - disc) * 100) / 100;
       }
       if (totalAmount === null && netAmount !== null) {
         taxAmount = taxAmount || 0;
-        totalAmount = netAmount + taxAmount;
+        totalAmount = Math.round((netAmount + taxAmount) * 100) / 100;
       }
 
       let finalTaxPercentage = inv.tax_percentage;
-      if ((finalTaxPercentage === 0 || finalTaxPercentage === null || finalTaxPercentage === undefined) && inv.tax_amount !== null && inv.tax_amount !== undefined && inv.tax_amount > 0 && inv.net_amount !== null && inv.net_amount !== undefined && inv.net_amount > 0) {
-        finalTaxPercentage = Math.round((inv.tax_amount / inv.net_amount) * 10000) / 100;
+      // Use locally-inferred netAmount (not raw inv.net_amount which may still be null)
+      // so that tax% can be derived even when the LLM omitted net_amount but we inferred it.
+      const netAmountForTaxCalc = netAmount; // already inferred above
+      if ((finalTaxPercentage === null || finalTaxPercentage === undefined) &&
+          inv.tax_amount !== null && inv.tax_amount !== undefined && inv.tax_amount > 0 &&
+          netAmountForTaxCalc !== null && netAmountForTaxCalc !== undefined && netAmountForTaxCalc > 0) {
+        finalTaxPercentage = Math.round((inv.tax_amount / netAmountForTaxCalc) * 10000) / 100;
       } else if (inv.tax_amount === 0) {
         finalTaxPercentage = 0;
       }
@@ -235,6 +248,7 @@ export function parseGeminiResponse(
         unitPrice: inv.unit_price !== undefined ? inv.unit_price : null,
         taxAmount: taxAmount !== undefined ? taxAmount : null,
         taxPercentage: finalTaxPercentage !== undefined ? finalTaxPercentage : null,
+        discount: inv.discount !== undefined && inv.discount !== null ? Math.round(inv.discount * 100) / 100 : null,
         totalAmount: totalAmount !== undefined ? totalAmount : null,
         netAmount: netAmount !== undefined ? netAmount : null,
         date: inv.date || null,

@@ -1,10 +1,10 @@
-export function formatCurrency(value: number | null | undefined): string {
+export function formatCurrency(value: number | null | undefined, currencyCode: string = 'USD'): string {
   if (value === null || value === undefined || isNaN(value)) {
     return '—';
   }
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency: currencyCode,
   }).format(value);
 }
 

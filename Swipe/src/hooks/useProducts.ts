@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateProduct, clearAll, productsAdapter } from '../store/slices/productsSlice';
 import { cascadeProductUpdate } from '../store/slices/invoicesSlice';
+import { clearAll as clearProcessing } from '../store/slices/processingSlice';
 import type { Product } from '../types';
 
 export function useProducts() {
@@ -24,6 +25,7 @@ export function useProducts() {
 
   const resetAllProducts = useCallback(() => {
     dispatch(clearAll());
+    dispatch(clearProcessing());
   }, [dispatch]);
 
   return {

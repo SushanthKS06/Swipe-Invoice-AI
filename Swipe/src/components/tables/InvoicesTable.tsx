@@ -10,6 +10,7 @@ interface InvoicesTableProps {
 export function InvoicesTable({ invoices }: InvoicesTableProps) {
   const { editInvoice } = useInvoices();
   const showBalanceDue = invoices.some(inv => inv.balanceDue != null);
+  const showDiscount = invoices.some(inv => inv.discount != null);
 
   return (
     <div id="invoices-table-container" className="w-full overflow-x-auto bg-white border border-slate-100 rounded-xl shadow-sm">
@@ -23,6 +24,7 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Unit Price</th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Tax Amount</th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-28">Tax %</th>
+            {showDiscount && <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Discount</th>}
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Net Amount</th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Total Amount</th>
             {showBalanceDue && <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Balance Due</th>}
@@ -101,6 +103,18 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
                 onSave={val => editInvoice(invoice.id, { taxPercentage: val })}
                 type="number"
               />
+
+              {/* Discount — conditionally rendered column */}
+              {showDiscount && (
+                <EditableCell
+                  value={invoice.discount}
+                  isMissing={false}
+                  fieldName="discount"
+                  onSave={val => editInvoice(invoice.id, { discount: val })}
+                  type="number"
+                  currencyCode={invoice.currencyCode}
+                />
+              )}
 
               {/* Net Amount */}
               <EditableCell

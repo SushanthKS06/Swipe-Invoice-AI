@@ -2,6 +2,8 @@ import { createSlice, createEntityAdapter, PayloadAction } from '@reduxjs/toolki
 import type { Product } from '../../types';
 
 export function computeProductMissingFields(product: Product): string[] {
+  // 'discount' is intentionally excluded — it is optional on products.
+  // Including it would flag every non-discounted product as having a missing field.
   const fieldsToCheck: Array<keyof Product> = [
     'name',
     'quantity',
@@ -9,7 +11,6 @@ export function computeProductMissingFields(product: Product): string[] {
     'tax',
     'taxPercentage',
     'priceWithTax',
-    'discount',
   ];
   return fieldsToCheck.filter(f => {
     const val = product[f];
@@ -35,17 +36,28 @@ const productsSlice = createSlice({
         
         if (match) {
           const sumQty = ((match.quantity || 0) + (newProduct.quantity || 0));
-          const sumTax = ((match.tax || 0) + (newProduct.tax || 0));
-          const newPriceWithTax = match.unitPrice !== null ? match.unitPrice + sumTax : null;
+          const sumTax = Math.round(((match.tax || 0) + (newProduct.tax || 0)) * 100) / 100;
+          // priceWithTax = unit price + per-unit tax. Per-unit tax = sumTax / sumQty.
+          // This keeps priceWithTax dimensionally correct (per unit, not aggregate).
+          const perUnitTax = sumQty > 0 ? sumTax / sumQty : 0;
+          const newPriceWithTax = match.unitPrice !== null
+            ? Math.round((match.unitPrice + perUnitTax) * 100) / 100
+            : null;
 
           productsAdapter.updateOne(state, {
             id: match.id,
             changes: {
               quantity: Math.round(sumQty * 100) / 100,
-              tax: Math.round(sumTax * 100) / 100,
-              priceWithTax: newPriceWithTax !== null ? Math.round(newPriceWithTax * 100) / 100 : match.priceWithTax
+              tax: sumTax,
+              priceWithTax: newPriceWithTax !== null ? newPriceWithTax : match.priceWithTax
             }
           });
+          
+          // Recompute missingFields after merge so banner count stays accurate
+          const updated = state.entities[match.id];
+          if (updated) {
+            updated.missingFields = computeProductMissingFields(updated as Product);
+          }
         } else {
           productsAdapter.addOne(state, newProduct);
         }

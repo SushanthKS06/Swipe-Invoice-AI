@@ -21,6 +21,7 @@ export interface Invoice {
   unitPrice: Nullable<number>;
   taxAmount: Nullable<number>;
   taxPercentage: Nullable<number>;
+  discount: Nullable<number>;          // Line-item discount amount
   totalAmount: Nullable<number>;
   netAmount: Nullable<number>;
   date: Nullable<string>;           // ISO date string YYYY-MM-DD
@@ -92,6 +93,7 @@ export interface GeminiExtractionResult {
     unit_price: Nullable<number>;
     tax_amount: Nullable<number>;
     tax_percentage: Nullable<number>;
+    discount: Nullable<number>;
     total_amount: Nullable<number>;
     net_amount: Nullable<number>;
     date: Nullable<string>;

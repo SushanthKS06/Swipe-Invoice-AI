@@ -23,22 +23,33 @@ const customersSlice = createSlice({
   reducers: {
     addCustomers(state, action: PayloadAction<Customer[]>) {
       const existingCustomers = Object.values(state.entities) as Customer[];
-      
+
       for (const newCustomer of action.payload) {
         const newName = (newCustomer.customerName || '').trim().toLowerCase();
-        
+
         const match = newName ? existingCustomers.find(
           c => (c.customerName || '').trim().toLowerCase() === newName
         ) : undefined;
-        
+
         if (match) {
           const sumAmt = ((match.totalPurchaseAmount || 0) + (newCustomer.totalPurchaseAmount || 0));
-          customersAdapter.updateOne(state, {
-            id: match.id,
-            changes: {
-              totalPurchaseAmount: Math.round(sumAmt * 100) / 100
-            }
-          });
+
+          // Backfill any contact fields the existing record is missing from the new record
+          const changes: Partial<Customer> = {
+            totalPurchaseAmount: Math.round(sumAmt * 100) / 100,
+          };
+          if (!match.phoneNumber && newCustomer.phoneNumber) changes.phoneNumber = newCustomer.phoneNumber;
+          if (!match.email && newCustomer.email) changes.email = newCustomer.email;
+          if (!match.address && newCustomer.address) changes.address = newCustomer.address;
+          if (!match.balanceDue && newCustomer.balanceDue) changes.balanceDue = newCustomer.balanceDue;
+
+          customersAdapter.updateOne(state, { id: match.id, changes });
+
+          // Recompute missingFields after merge so banner count stays accurate
+          const updated = state.entities[match.id];
+          if (updated) {
+            updated.missingFields = computeCustomerMissingFields(updated as Customer);
+          }
         } else {
           customersAdapter.addOne(state, newCustomer);
         }

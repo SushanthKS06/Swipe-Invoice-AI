@@ -38,7 +38,7 @@ CRITICAL RULES:
 - Set unit_price to equal the net_amount.
 - This ensures that quantity * unit_price = net_amount.
 - When generating the global products array for summary documents, you must create a single master product named 'General Entry'. Set its quantity to the total number of summary invoices you processed. Set its unit_price to null (because the price fluctuates per invoice). NEVER output a master product with 0 quantity.
-16. MATHEMATICAL VALIDATION: Before outputting any invoice item, verify that quantity * unit_price roughly equals the net_amount (excluding tax/discount). NEVER output a row where quantity and unit price are 0 but the net amount is greater than 0.
+16. MATHEMATICAL VALIDATION: Before outputting any invoice item, verify that (quantity * unit_price) - discount roughly equals the net_amount. If a discount value is visible on the invoice line item (labeled as 'Discount', 'Disc.', 'Rebate', etc.), you MUST extract it as a raw positive number into the \`discount\` field of the invoice item. NEVER output a row where quantity and unit price are 0 but the net amount is greater than 0.
 
 DEDUPLICATION: If the same customer appears multiple times, sum their total purchase amount and keep a single customer entry. Keep product list unique. Keep the structure perfect.
 ENTITY RESOLUTION: You must act as an entity resolution engine. If you see 'Acme Corp' and 'Acme Corporation' across different rows, you MUST recognize them as the same entity and assign them the EXACT same \`customer_id\`. Do the same for slight variations in product names. The \`customer_id\` and \`product_id\` must be alphanumeric slugs (e.g., 'cust_acme_corp').
@@ -71,6 +71,7 @@ const extractionSchema: Schema = {
           unit_price: { type: Type.NUMBER, nullable: true, description: "Must be equal to net_amount if quantity is 1 and other details are missing." },
           tax_amount: { type: Type.NUMBER, nullable: true },
           tax_percentage: { type: Type.NUMBER, nullable: true },
+          discount: { type: Type.NUMBER, nullable: true, description: "Line-item discount amount as a raw positive number. Extract if labeled Discount, Disc., Rebate, etc. Null if absent." },
           total_amount: { type: Type.NUMBER, nullable: true },
           net_amount: { type: Type.NUMBER, nullable: true },
           date: { type: Type.STRING, nullable: true },

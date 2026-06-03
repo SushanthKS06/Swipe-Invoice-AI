@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateCustomer, clearAll, customersAdapter } from '../store/slices/customersSlice';
 import { cascadeCustomerUpdate } from '../store/slices/invoicesSlice';
+import { clearAll as clearProcessing } from '../store/slices/processingSlice';
 import type { Customer } from '../types';
 
 export function useCustomers() {
@@ -23,6 +24,7 @@ export function useCustomers() {
 
   const resetAllCustomers = useCallback(() => {
     dispatch(clearAll());
+    dispatch(clearProcessing());
   }, [dispatch]);
 
   return {
