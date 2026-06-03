@@ -34,6 +34,20 @@ sequenceDiagram
 - **Export Ready**: Download the normalized tables (Invoices, Products, Customers) out to clean CSV formats with empty/null field protection.
 - **Resilient AI Calling**: Wraps the AI execution logic in an Exponential Backoff strategy to gracefully mitigate `503 High Demand` errors or rate limits.
 
+## Screenshots
+
+### 1. Upload Interface & Extraction Queue
+![Upload Interface](./assets/upload-interface.png)
+
+### 2. Customers Ledger (Interactive Correction UI)
+![Customers Ledger](./assets/customers-ledger.png)
+
+### 3. Products Catalog
+![Products Catalog](./assets/products-catalog.png)
+
+### 4. Invoices Table
+![Invoices Table](./assets/invoices-table.png)
+
 ## Technology Stack
 
 | Component | Technology | Purpose |
