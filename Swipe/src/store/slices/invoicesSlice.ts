@@ -59,14 +59,22 @@ function revalidateInvoiceMath(invoice: Invoice): void {
  */
 function recomputeInvoiceAmounts(invoice: Invoice, updates: Partial<Invoice> = {}): void {
   // If qty and unitPrice are both present, recompute netAmount
+  let netAmountChanged = false;
   if (invoice.quantity !== null && invoice.quantity !== undefined &&
       invoice.unitPrice !== null && invoice.unitPrice !== undefined) {
     const disc = invoice.discount ?? 0;
-    invoice.netAmount = Math.round((invoice.quantity * invoice.unitPrice - disc) * 100) / 100;
+    const newNet = Math.round((invoice.quantity * invoice.unitPrice - disc) * 100) / 100;
+    if (invoice.netAmount !== newNet) {
+        invoice.netAmount = newNet;
+        netAmountChanged = true;
+    }
   }
 
-  if ('taxPercentage' in updates && updates.taxPercentage !== undefined && invoice.netAmount != null) {
-    invoice.taxAmount = Math.round((invoice.netAmount * (updates.taxPercentage / 100)) * 100) / 100;
+  if (('taxPercentage' in updates && updates.taxPercentage !== undefined) || (netAmountChanged && invoice.taxPercentage != null)) {
+    const taxPerc = updates.taxPercentage !== undefined ? updates.taxPercentage : invoice.taxPercentage;
+    if (taxPerc != null && invoice.netAmount != null) {
+      invoice.taxAmount = Math.round((invoice.netAmount * (taxPerc / 100)) * 100) / 100;
+    }
   } else if ('taxAmount' in updates && updates.taxAmount !== undefined && invoice.netAmount != null && invoice.netAmount > 0) {
     invoice.taxPercentage = Math.round((updates.taxAmount / invoice.netAmount) * 10000) / 100;
   }

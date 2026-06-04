@@ -71,8 +71,19 @@ const productsSlice = createSlice({
       const product = state.entities[action.payload.id];
       if (product) {
         const { updates } = action.payload;
-        if (('unitPrice' in updates || 'tax' in updates || 'quantity' in updates) && product.unitPrice !== null) {
-          const perUnitTax = (product.tax || 0) / (product.quantity != null && product.quantity !== 0 ? product.quantity : 1);
+        // Auto-recalculate tax and priceWithTax
+        if (('unitPrice' in updates || 'tax' in updates || 'quantity' in updates || 'taxPercentage' in updates) && product.unitPrice !== null) {
+          
+          if (('unitPrice' in updates || 'quantity' in updates || 'taxPercentage' in updates) && product.taxPercentage != null) {
+            const qty = product.quantity != null && product.quantity !== 0 ? product.quantity : 1;
+            product.tax = Math.round((product.unitPrice * qty * (product.taxPercentage / 100)) * 100) / 100;
+          } else if ('tax' in updates && product.unitPrice != null && product.unitPrice > 0) {
+            const qty = product.quantity != null && product.quantity !== 0 ? product.quantity : 1;
+            product.taxPercentage = Math.round((product.tax / (product.unitPrice * qty)) * 10000) / 100;
+          }
+
+          const qtyForPerUnit = product.quantity != null && product.quantity !== 0 ? product.quantity : 1;
+          const perUnitTax = (product.tax || 0) / qtyForPerUnit;
           product.priceWithTax = Math.round((product.unitPrice + perUnitTax) * 100) / 100;
         }
 
