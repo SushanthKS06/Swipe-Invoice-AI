@@ -36,6 +36,7 @@ export function EmptyState({
       {/* Primary Trigger Button */}
       <button
         onClick={onUploadClick}
+        aria-label="Upload documents"
         className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 shadow transition-all font-sans"
       >
         <FileUp className="w-4 h-4" />

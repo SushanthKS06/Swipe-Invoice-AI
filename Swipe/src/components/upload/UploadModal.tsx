@@ -1,3 +1,4 @@
+import { useEffect, useCallback } from 'react';
 import { X, HelpCircle, RefreshCw } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { useFileProcessor } from '../../hooks/useFileProcessor';
@@ -21,7 +22,9 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
   };
 
   const handleResetQueue = () => {
-    dispatch(clearAll());
+    if (window.confirm('Are you sure you want to clear the entire upload queue history?')) {
+      dispatch(clearAll());
+    }
   };
 
   // Determine if queue has active items in flight
@@ -29,10 +32,24 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
     f => f.status !== 'complete' && f.status !== 'error'
   );
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape' && !hasInFlightItems) {
+      onClose();
+    }
+  }, [hasInFlightItems, onClose]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, handleKeyDown]);
+
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <div id="upload-modal-wrapper" className="fixed inset-0 z-50 overflow-y-auto">
+        <div id="upload-modal-wrapper" className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label="Upload documents">
           {/* Backdrop blurring cover click-out */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -60,7 +77,7 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
                     Swipe Invoice AI Extractor
                   </h2>
                   <p className="text-xs text-slate-400 font-sans mt-0.5">
-                    Multimodal batch extraction utilizing advanced Gemini 3.5 AI
+                    Multimodal batch extraction utilizing advanced Gemini AI
                   </p>
                 </div>
                 <button
@@ -103,7 +120,7 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all font-sans"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
-                      Clear Queue Hist
+                      Clear History
                     </button>
                   </div>
                 </div>

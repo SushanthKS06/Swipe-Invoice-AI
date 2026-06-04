@@ -5,8 +5,6 @@ export function computeCustomerMissingFields(customer: Customer): string[] {
   const fieldsToCheck: Array<keyof Customer> = [
     'customerName',
     'phoneNumber',
-    'email',
-    'address',
     'totalPurchaseAmount',
   ];
   return fieldsToCheck.filter(f => {
@@ -41,7 +39,7 @@ const customersSlice = createSlice({
           if (!match.phoneNumber && newCustomer.phoneNumber) changes.phoneNumber = newCustomer.phoneNumber;
           if (!match.email && newCustomer.email) changes.email = newCustomer.email;
           if (!match.address && newCustomer.address) changes.address = newCustomer.address;
-          if (!match.balanceDue && newCustomer.balanceDue) changes.balanceDue = newCustomer.balanceDue;
+          if ((match.balanceDue === null || match.balanceDue === undefined) && newCustomer.balanceDue != null) changes.balanceDue = newCustomer.balanceDue;
 
           customersAdapter.updateOne(state, { id: match.id, changes });
 

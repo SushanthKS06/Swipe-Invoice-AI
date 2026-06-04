@@ -7,9 +7,8 @@ export function computeInvoiceMissingFields(invoice: Invoice): string[] {
     'customerName',
     'productName',
     'quantity',
-    'unitPrice',
+    'taxAmount',
     'totalAmount',
-    'netAmount',
     'date',
   ];
   return fieldsToCheck.filter(f => {
@@ -58,7 +57,7 @@ function revalidateInvoiceMath(invoice: Invoice): void {
  *   totalAmount = round(netAmount + taxAmount, 2)           — if netAmount & taxAmount known
  *   taxPercentage = round((taxAmount / netAmount) × 100, 2) — if both known
  */
-function recomputeInvoiceAmounts(invoice: Invoice): void {
+function recomputeInvoiceAmounts(invoice: Invoice, updates: Partial<Invoice> = {}): void {
   // If qty and unitPrice are both present, recompute netAmount
   if (invoice.quantity !== null && invoice.quantity !== undefined &&
       invoice.unitPrice !== null && invoice.unitPrice !== undefined) {
@@ -66,10 +65,10 @@ function recomputeInvoiceAmounts(invoice: Invoice): void {
     invoice.netAmount = Math.round((invoice.quantity * invoice.unitPrice - disc) * 100) / 100;
   }
 
-  // If netAmount and taxAmount are both present, recompute totalAmount
-  if (invoice.netAmount !== null && invoice.netAmount !== undefined &&
-      invoice.taxAmount !== null && invoice.taxAmount !== undefined) {
-    invoice.totalAmount = Math.round((invoice.netAmount + invoice.taxAmount) * 100) / 100;
+  if ('taxPercentage' in updates && updates.taxPercentage !== undefined && invoice.netAmount != null) {
+    invoice.taxAmount = Math.round((invoice.netAmount * (updates.taxPercentage / 100)) * 100) / 100;
+  } else if ('taxAmount' in updates && updates.taxAmount !== undefined && invoice.netAmount != null && invoice.netAmount > 0) {
+    invoice.taxPercentage = Math.round((updates.taxAmount / invoice.netAmount) * 10000) / 100;
   }
 
   // If taxAmount and netAmount are known but taxPercentage is missing, infer it
@@ -81,6 +80,12 @@ function recomputeInvoiceAmounts(invoice: Invoice): void {
   // Explicit 0% tax
   if (invoice.taxAmount === 0) {
     invoice.taxPercentage = 0;
+  }
+
+  // If netAmount and taxAmount are both present, recompute totalAmount
+  if (invoice.netAmount !== null && invoice.netAmount !== undefined &&
+      invoice.taxAmount !== null && invoice.taxAmount !== undefined) {
+    invoice.totalAmount = Math.round((invoice.netAmount + invoice.taxAmount) * 100) / 100;
   }
 }
 
@@ -101,11 +106,11 @@ const invoicesSlice = createSlice({
       if (invoice) {
         // Recompute dependent amounts whenever any financial field changes
         const financialFields: Array<keyof Invoice> = [
-          'quantity', 'unitPrice', 'discount', 'taxAmount', 'netAmount',
+          'quantity', 'unitPrice', 'discount', 'taxAmount', 'netAmount', 'taxPercentage', 'totalAmount'
         ];
         const touchedFinancials = financialFields.some(f => f in action.payload.updates);
         if (touchedFinancials) {
-          recomputeInvoiceAmounts(invoice as Invoice);
+          recomputeInvoiceAmounts(invoice as Invoice, action.payload.updates);
         }
 
         // Always re-run math validation so the confidence badge reflects current state
@@ -117,26 +122,34 @@ const invoicesSlice = createSlice({
     },
     cascadeProductUpdate(
       state,
-      action: PayloadAction<{ productId: string; name?: string; unitPrice?: number }>
+      action: PayloadAction<{ productId: string; name?: string; unitPrice?: number; taxAmount?: number; quantity?: number; taxPercentage?: number }>
     ) {
-      const { productId, name, unitPrice } = action.payload;
+      const { productId, name, unitPrice, taxAmount, quantity, taxPercentage } = action.payload;
       Object.values(state.entities).forEach(invoice => {
         if (invoice && invoice.productId === productId) {
           if (name !== undefined) {
             invoice.productName = name;
           }
+          if (taxAmount !== undefined) {
+            invoice.taxAmount = taxAmount;
+          }
+          if (quantity !== undefined) {
+            invoice.quantity = quantity;
+          }
+          if (taxPercentage !== undefined) {
+            invoice.taxPercentage = taxPercentage;
+          }
+          
+          const mathNeedsUpdate = unitPrice !== undefined || taxAmount !== undefined || quantity !== undefined || taxPercentage !== undefined;
+          
           if (unitPrice !== undefined) {
             invoice.unitPrice = unitPrice;
-            // Recompute net and total amounts so invoice financials stay consistent
-            // Formula: netAmount = (qty × unitPrice) − discount
-            //          totalAmount = netAmount + taxAmount
-            if (invoice.quantity !== null && invoice.quantity !== undefined) {
-              const disc = (invoice.discount !== null && invoice.discount !== undefined) ? invoice.discount : 0;
-              invoice.netAmount = Math.round((invoice.quantity * unitPrice - disc) * 100) / 100;
-              const tax = (invoice.taxAmount !== null && invoice.taxAmount !== undefined) ? invoice.taxAmount : 0;
-              invoice.totalAmount = Math.round((invoice.netAmount + tax) * 100) / 100;
-            }
           }
+          
+          if (mathNeedsUpdate) {
+            recomputeInvoiceAmounts(invoice as Invoice, { unitPrice, taxAmount, taxPercentage });
+          }
+          
           revalidateInvoiceMath(invoice as Invoice);
           invoice.missingFields = computeInvoiceMissingFields(invoice as Invoice);
         }

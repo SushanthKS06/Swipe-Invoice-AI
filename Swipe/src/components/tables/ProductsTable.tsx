@@ -15,15 +15,15 @@ export function ProductsTable({ products }: ProductsTableProps) {
       <table className="w-full table-auto border-collapse text-left min-w-[1000px]">
         <thead>
           <tr className="bg-slate-50/70 border-b border-slate-100">
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-64">Product Name</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-24">Quantity</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Unit Price</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Tax</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-28">Tax %</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Price with Tax</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Discount</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Confidence</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-48">Source File</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-64">Product Name</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-24">Quantity</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Unit Price</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Tax</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-28">Tax %</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Price with Tax</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Discount</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Confidence</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-48">Source File</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">

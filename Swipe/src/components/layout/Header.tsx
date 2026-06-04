@@ -1,4 +1,4 @@
-import { FileSpreadsheet, Plus, Table2, Users2, ShoppingBag } from 'lucide-react';
+import { Plus, Table2, Users2, ShoppingBag } from 'lucide-react';
 import { useAppSelector } from '../../store/hooks';
 
 interface HeaderProps {
@@ -65,7 +65,7 @@ export function Header({ onUploadClick }: HeaderProps) {
       <div className="flex-shrink-0">
         <button
           onClick={onUploadClick}
-          className="inline-flex items-center gap-1.5 px-4.5 py-2.5 text-sm font-semibold rounded-xl text-white bg-slate-900 hover:bg-slate-850 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 active:scale-98 font-sans"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold rounded-xl text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 active:scale-[0.98] font-sans"
         >
           <Plus className="w-4 h-4 stroke-[2.5]" />
           Upload Documents...

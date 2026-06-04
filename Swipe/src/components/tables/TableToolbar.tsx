@@ -50,6 +50,7 @@ export function TableToolbar({
           <input
             type="text"
             placeholder="Search records..."
+            aria-label="Search records"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full text-sm py-2 pl-9 pr-4 text-slate-900 border border-slate-200 bg-slate-50/50 rounded-lg placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 transition-all font-sans"
@@ -71,7 +72,7 @@ export function TableToolbar({
         {/* Clear Data Button */}
         {onClearAll && recordCount > 0 && (
           <button
-            onClick={onClearAll}
+            onClick={() => { if (window.confirm('Are you sure you want to reset all data in this tab?')) onClearAll(); }}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium border border-red-200 hover:border-red-300 text-red-600 hover:text-red-700 rounded-lg bg-red-50/30 hover:bg-red-50/70 transition-all"
             title="Clear all parsed entities in this section"
           >

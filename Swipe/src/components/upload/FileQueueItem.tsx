@@ -1,11 +1,10 @@
-import React from 'react';
+
 import { FileText, FileSpreadsheet, Image as ImageIcon, File, AlertCircle, CheckCircle } from 'lucide-react';
 import type { ProcessingFile } from '../../types';
 import { formatFileSize } from '../../utils/fileHelpers';
 import { StatusBadge } from '../common/StatusBadge';
 
 interface FileQueueItemProps {
-  key?: string;
   file: ProcessingFile;
 }
 

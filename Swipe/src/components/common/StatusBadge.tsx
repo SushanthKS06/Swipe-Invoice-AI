@@ -48,7 +48,6 @@ export function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <span
-      id={`status-badge-${status}`}
       className={`inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold border ${currentStyle.border} ${currentStyle.bg} ${currentStyle.text}`}
     >
       {currentStyle.label}

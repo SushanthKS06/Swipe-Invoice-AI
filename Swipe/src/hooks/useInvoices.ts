@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateInvoice, clearAll, invoicesAdapter } from '../store/slices/invoicesSlice';
-import { clearAll as clearProcessing } from '../store/slices/processingSlice';
+import { clearSignaturesOnly } from '../store/slices/processingSlice';
 import type { Invoice } from '../types';
 
 export function useInvoices() {
@@ -14,7 +14,7 @@ export function useInvoices() {
 
   const resetAllInvoices = useCallback(() => {
     dispatch(clearAll());
-    dispatch(clearProcessing());
+    dispatch(clearSignaturesOnly());
   }, [dispatch]);
 
   return {

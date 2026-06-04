@@ -56,14 +56,12 @@ export function useFileProcessor() {
 
     toast.success(`Enqueued ${newFiles.length} file(s) for Invoice AI extraction.`);
 
-    let activeWorkerCount = 0;
     let nextIndex = 0;
 
     const runWorker = async (): Promise<void> => {
       if (nextIndex >= itemQueue.length) return;
 
       const currentItem = itemQueue[nextIndex++];
-      activeWorkerCount++;
 
       dispatch(
         updateFileStatus({
@@ -117,7 +115,6 @@ export function useFileProcessor() {
           duration: 5000,
         });
       } finally {
-        activeWorkerCount--;
         // Start another work item if any remains
         await runWorker();
       }
@@ -130,7 +127,7 @@ export function useFileProcessor() {
     }
 
     await Promise.all(workerPromises);
-  }, [dispatch]);
+  }, [dispatch, processedSignatures]);
 
   return { uploadAndProcessFiles };
 }

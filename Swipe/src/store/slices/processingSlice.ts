@@ -78,6 +78,9 @@ const processingSlice = createSlice({
       state.files = [];
       state.processedSignatures = [];
     },
+    clearSignaturesOnly(state) {
+      state.processedSignatures = [];
+    },
   },
 });
 
@@ -88,6 +91,7 @@ export const {
   removeFile,
   addProcessedSignature,
   clearAll,
+  clearSignaturesOnly,
 } = processingSlice.actions;
 
 export default processingSlice.reducer;

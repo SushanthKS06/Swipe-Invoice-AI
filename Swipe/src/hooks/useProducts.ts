@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateProduct, clearAll, productsAdapter } from '../store/slices/productsSlice';
 import { cascadeProductUpdate } from '../store/slices/invoicesSlice';
-import { clearAll as clearProcessing } from '../store/slices/processingSlice';
+import { clearSignaturesOnly } from '../store/slices/processingSlice';
 import type { Product } from '../types';
 
 export function useProducts() {
@@ -19,13 +19,16 @@ export function useProducts() {
         productId: id,
         name: updates.name,
         unitPrice: updates.unitPrice,
+        taxAmount: updates.tax,
+        quantity: updates.quantity,
+        taxPercentage: updates.taxPercentage,
       })
     );
   }, [dispatch]);
 
   const resetAllProducts = useCallback(() => {
     dispatch(clearAll());
-    dispatch(clearProcessing());
+    dispatch(clearSignaturesOnly());
   }, [dispatch]);
 
   return {

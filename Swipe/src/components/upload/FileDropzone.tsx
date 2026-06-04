@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Upload, FileCode2, Image, FileText } from 'lucide-react';
+import { useCallback } from 'react';
+import { useDropzone, FileRejection } from 'react-dropzone';
+import { Upload, FileCode2, FileText } from 'lucide-react';
 
 interface FileDropzoneProps {
   onFilesSelected: (files: File[]) => void;
@@ -14,8 +14,14 @@ export function FileDropzone({ onFilesSelected }: FileDropzoneProps) {
     [onFilesSelected]
   );
 
+  const onDropRejected = useCallback((rejections: FileRejection[]) => {
+    const names = rejections.map(r => r.file.name).join(', ');
+    alert(`The following files were rejected (unsupported type or exceeds 50 MB): ${names}`);
+  }, []);
+
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
+    onDropRejected,
     accept: {
       'application/pdf': ['.pdf'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
@@ -25,8 +31,9 @@ export function FileDropzone({ onFilesSelected }: FileDropzoneProps) {
       'image/png': ['.png'],
       'image/webp': ['.webp'],
     },
+    maxSize: 50 * 1024 * 1024,
     multiple: true,
-  } as any);
+  });
 
   return (
     <div

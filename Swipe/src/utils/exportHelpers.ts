@@ -26,8 +26,8 @@ export function exportToCSV(data: Record<string, any>[], filename: string): void
             strValue = String(displayValue);
           }
 
-          // Escape inner double quotes by doubling them up, then wrap the entire cell in quotes
-          const escaped = strValue.replace(/"/g, '""');
+          // Replace newlines and escape inner double quotes, then wrap the entire cell in quotes
+          const escaped = strValue.replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/"/g, '""');
           return `"${escaped}"`;
         })
         .join(',');

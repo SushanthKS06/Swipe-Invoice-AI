@@ -39,7 +39,7 @@ export interface Product {
   unitPrice: Nullable<number>;
   tax: Nullable<number>;
   taxPercentage: Nullable<number>;
-  priceWithTax: Nullable<Nullable<number>>; // Can be calculated or extracted
+  priceWithTax: Nullable<number>; // Can be calculated or extracted
   discount: Nullable<number>;
   discountPercentage: Nullable<number>;
   missingFields: string[];
@@ -108,6 +108,7 @@ export interface GeminiExtractionResult {
     tax_percentage: Nullable<number>;
     price_with_tax: Nullable<number>;
     discount: Nullable<number>;
+    discount_percentage?: number | null;
   }>;
   customers: Array<{
     id: Nullable<string>;

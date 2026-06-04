@@ -22,17 +22,15 @@ export function parseGeminiResponse(
   const safeCustomers = data.customers || [];
   const safeInvoices = data.invoices || [];
 
-  if (Array.isArray(safeProducts)) {
-    safeProducts.forEach(p => {
-      // Need ID to track relational mapping
-      const pId = p.id;
-      if (!pId) return;
+  safeProducts.forEach(p => {
+    // Need ID to track relational mapping
+    const productId = p.id || uuidv4();
 
-      let uuid = productUuidMap.get(pId);
-      if (!uuid) {
-        uuid = uuidv4();
-        productUuidMap.set(pId, uuid);
-      }
+    let uuid = productUuidMap.get(productId);
+    if (!uuid) {
+      uuid = uuidv4();
+      productUuidMap.set(productId, uuid);
+    }
 
       if (!productsResultMap.has(uuid)) {
         const productObj: Product = {
@@ -81,18 +79,14 @@ export function parseGeminiResponse(
         existing.missingFields = computeProductMissingFields(existing);
       }
     });
-  }
+  safeCustomers.forEach(c => {
+    const customerId = c.id || uuidv4();
 
-  if (Array.isArray(safeCustomers)) {
-    safeCustomers.forEach(c => {
-      const cId = c.id;
-      if (!cId) return;
-
-      let uuid = customerUuidMap.get(cId);
-      if (!uuid) {
-        uuid = uuidv4();
-        customerUuidMap.set(cId, uuid);
-      }
+    let uuid = customerUuidMap.get(customerId);
+    if (!uuid) {
+      uuid = uuidv4();
+      customerUuidMap.set(customerId, uuid);
+    }
 
       if (!customersResultMap.has(uuid)) {
         const customerObj: Customer = {
@@ -122,12 +116,9 @@ export function parseGeminiResponse(
         existing.missingFields = computeCustomerMissingFields(existing);
       }
     });
-  }
-
   const invoices: Invoice[] = [];
 
-  if (Array.isArray(safeInvoices)) {
-    safeInvoices.forEach(inv => {
+  safeInvoices.forEach(inv => {
       let fCustomerUuid: string | null = null;
       let fProductUuid: string | null = null;
 
@@ -220,30 +211,37 @@ export function parseGeminiResponse(
         const disc = inv.discount !== null && inv.discount !== undefined ? inv.discount : 0;
         netAmount = Math.round((inv.quantity * inv.unit_price - disc) * 100) / 100;
       }
-      if (totalAmount === null && netAmount !== null) {
-        taxAmount = taxAmount || 0;
-        totalAmount = Math.round((netAmount + taxAmount) * 100) / 100;
-      }
 
       let finalTaxPercentage = inv.tax_percentage;
+      
+      // Derive missing taxAmount from percentage
+      if (taxAmount === null && finalTaxPercentage !== null && finalTaxPercentage !== undefined && netAmount !== null) {
+        taxAmount = Math.round((netAmount * (finalTaxPercentage / 100)) * 100) / 100;
+      }
+
+      if (totalAmount === null && netAmount !== null) {
+        const safeTax = taxAmount || 0;
+        totalAmount = Math.round((netAmount + safeTax) * 100) / 100;
+      }
+
       // Use locally-inferred netAmount (not raw inv.net_amount which may still be null)
       // so that tax% can be derived even when the LLM omitted net_amount but we inferred it.
       const netAmountForTaxCalc = netAmount; // already inferred above
       if ((finalTaxPercentage === null || finalTaxPercentage === undefined) &&
-          inv.tax_amount !== null && inv.tax_amount !== undefined && inv.tax_amount > 0 &&
+          taxAmount !== null && taxAmount !== undefined && taxAmount > 0 &&
           netAmountForTaxCalc !== null && netAmountForTaxCalc !== undefined && netAmountForTaxCalc > 0) {
-        finalTaxPercentage = Math.round((inv.tax_amount / netAmountForTaxCalc) * 10000) / 100;
-      } else if (inv.tax_amount === 0) {
+        finalTaxPercentage = Math.round((taxAmount / netAmountForTaxCalc) * 10000) / 100;
+      } else if (taxAmount === 0) {
         finalTaxPercentage = 0;
       }
 
       const invoiceObj: Invoice = {
         id: uuidv4(),
-        serialNumber: inv.serial_number ? inv.serial_number.trim() : null,
+        serialNumber: inv.serial_number != null ? inv.serial_number.trim() || null : null,
         customerId: fCustomerUuid,
-        customerName: inv.customer_name ? inv.customer_name.trim() : null,
+        customerName: inv.customer_name != null ? inv.customer_name.trim() || null : null,
         productId: fProductUuid,
-        productName: inv.product_name ? inv.product_name.trim() : null,
+        productName: inv.product_name != null ? inv.product_name.trim() || null : null,
         quantity: inv.quantity !== undefined ? inv.quantity : null,
         unitPrice: inv.unit_price !== undefined ? inv.unit_price : null,
         taxAmount: taxAmount !== undefined ? taxAmount : null,
@@ -261,8 +259,7 @@ export function parseGeminiResponse(
 
       invoiceObj.missingFields = computeInvoiceMissingFields(invoiceObj);
       invoices.push(invoiceObj);
-    });
-  }
+  });
 
   validateExtractionMath(invoices);
 

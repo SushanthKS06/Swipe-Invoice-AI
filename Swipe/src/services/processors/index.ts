@@ -58,7 +58,7 @@ export async function processFile(
     // Concurrent/batched: if we want concurrent we could Promise.all. 
     // The prompt says "concurrent/batched calls", but let's do Promise.all to be fast, but we'll batches of 5.
     // For simplicity, we can do them sequentially unless specified. The token bomb refers to one giant call.
-    // Sequential helps with rate limting.
+    // Sequential helps with rate limiting.
     
     const response = await fetch('/api/extract', {
       method: 'POST',

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Table2, ShoppingBag, Users2 } from 'lucide-react';
 import { useAppSelector } from '../../store/hooks';
 import { motion } from 'motion/react';
@@ -41,12 +41,14 @@ export function TabBar({ activeTab, setActiveTab }: TabBarProps) {
       id="app-tabbar-navigation"
       className="flex border-b border-slate-100 bg-white px-2 overflow-x-auto scrollbar-none sticky top-[73px] z-30 shadow-xs"
     >
-      <div className="flex gap-1">
+      <div className="flex gap-1" role="tablist">
         {tabs.map(tab => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
+              role="tab"
+              aria-selected={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
               className="relative px-5 py-3.5 flex items-center gap-2 text-sm font-medium transition-all focus:outline-none select-none shrink-0"
               style={{ WebkitTapHighlightColor: 'transparent' }}

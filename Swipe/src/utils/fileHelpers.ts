@@ -13,6 +13,7 @@ export function toBase64(file: File): Promise<string> {
 }
 
 export function formatFileSize(bytes: number): string {
+  if (bytes < 0) return '0 B';
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -34,6 +35,8 @@ export function getMimeType(file: File): string {
     case 'jpeg': return 'image/jpeg';
     case 'png': return 'image/png';
     case 'webp': return 'image/webp';
+    case 'gif': return 'image/gif';
+    case 'bmp': return 'image/bmp';
     default: return 'application/octet-stream';
   }
 }

@@ -16,14 +16,14 @@ export function CustomersTable({ customers }: CustomersTableProps) {
       <table className="w-full table-auto border-collapse text-left min-w-[1000px]">
         <thead>
           <tr className="bg-slate-50/70 border-b border-slate-100">
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-64">Customer Name</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-40">Phone Number</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-52">Email Address</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-80">Billing Address</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-40">Total Purchase</th>
-            {showBalanceDue && <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Balance Due</th>}
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Confidence</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-48">Source File</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-64">Customer Name</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-40">Phone Number</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-52">Email Address</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-80">Billing Address</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-40">Total Purchase</th>
+            {showBalanceDue && <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Balance Due</th>}
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Confidence</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-48">Source File</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">

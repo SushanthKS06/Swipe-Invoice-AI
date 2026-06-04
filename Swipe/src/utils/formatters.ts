@@ -2,10 +2,14 @@ export function formatCurrency(value: number | null | undefined, currencyCode: s
   if (value === null || value === undefined || isNaN(value)) {
     return '—';
   }
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currencyCode,
-  }).format(value);
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currencyCode,
+    }).format(value);
+  } catch (e) {
+    return `${currencyCode} ${value.toFixed(2)}`;
+  }
 }
 
 export function formatDate(dateStr: string | null | undefined): string {

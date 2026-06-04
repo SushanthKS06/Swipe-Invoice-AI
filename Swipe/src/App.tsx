@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { Toaster } from 'react-hot-toast';
@@ -80,13 +80,13 @@ function MainApp() {
         'Customer': i.customerName || 'N/A',
         'Product Reference': i.productName || 'N/A',
         'Quantity': i.quantity === null || i.quantity === undefined ? "" : i.quantity,
-        'Unit Price ($)': i.unitPrice === null || i.unitPrice === undefined ? "" : i.unitPrice,
-        'Tax Amount ($)': i.taxAmount === null || i.taxAmount === undefined ? "" : i.taxAmount,
+        'Unit Price': i.unitPrice === null || i.unitPrice === undefined ? "" : i.unitPrice,
+        'Tax Amount': i.taxAmount === null || i.taxAmount === undefined ? "" : i.taxAmount,
         'Tax Rate (%)': i.taxPercentage === null || i.taxPercentage === undefined ? "" : i.taxPercentage,
-        'Discount ($)': i.discount === null || i.discount === undefined ? "" : i.discount,
-        'Net Amount ($)': i.netAmount === null || i.netAmount === undefined ? "" : i.netAmount,
-        'Total Amount ($)': i.totalAmount === null || i.totalAmount === undefined ? "" : i.totalAmount,
-        'Balance Due ($)': i.balanceDue === null || i.balanceDue === undefined ? "" : i.balanceDue,
+        'Discount': i.discount === null || i.discount === undefined ? "" : i.discount,
+        'Net Amount': i.netAmount === null || i.netAmount === undefined ? "" : i.netAmount,
+        'Total Amount': i.totalAmount === null || i.totalAmount === undefined ? "" : i.totalAmount,
+        'Balance Due': i.balanceDue === null || i.balanceDue === undefined ? "" : i.balanceDue,
         'Invoice Date': i.date || 'N/A',
         'Extraction Confidence': i.confidence,
         'Parsed Source Filename': i.sourceFile,
@@ -95,11 +95,11 @@ function MainApp() {
       return filteredProducts.map(p => ({
         'Product Name': p.name || 'N/A',
         'Cumulative Quantity': p.quantity === null || p.quantity === undefined ? "" : p.quantity,
-        'Raw Unit Price ($)': p.unitPrice === null || p.unitPrice === undefined ? "" : p.unitPrice,
-        'Calculated Tax ($)': p.tax === null || p.tax === undefined ? "" : p.tax,
+        'Raw Unit Price': p.unitPrice === null || p.unitPrice === undefined ? "" : p.unitPrice,
+        'Calculated Tax': p.tax === null || p.tax === undefined ? "" : p.tax,
         'Tax Rate (%)': p.taxPercentage === null || p.taxPercentage === undefined ? "" : p.taxPercentage,
-        'Gross Price with Tax ($)': p.priceWithTax === null || p.priceWithTax === undefined ? "" : p.priceWithTax,
-        'Extracted Discount ($)': p.discount === null || p.discount === undefined ? "" : p.discount,
+        'Gross Price with Tax': p.priceWithTax === null || p.priceWithTax === undefined ? "" : p.priceWithTax,
+        'Extracted Discount': p.discount === null || p.discount === undefined ? "" : p.discount,
         'Extraction Confidence': p.confidence,
         'Parsed Source Filename': p.sourceFile,
       }));
@@ -109,8 +109,8 @@ function MainApp() {
         'Phone Number': c.phoneNumber || 'N/A',
         'Email Address': c.email || 'N/A',
         'Billing Address': c.address || 'N/A',
-        'Aggregate Purchases ($)': c.totalPurchaseAmount === null || c.totalPurchaseAmount === undefined ? "" : c.totalPurchaseAmount,
-        'Balance Due ($)': c.balanceDue === null || c.balanceDue === undefined ? "" : c.balanceDue,
+        'Aggregate Purchases': c.totalPurchaseAmount === null || c.totalPurchaseAmount === undefined ? "" : c.totalPurchaseAmount,
+        'Balance Due': c.balanceDue === null || c.balanceDue === undefined ? "" : c.balanceDue,
         'Extraction Confidence': c.confidence,
         'Parsed Source Filename': c.sourceFile,
       }));
@@ -150,6 +150,16 @@ function MainApp() {
           setSearchQuery: setCustomerSearchQuery,
           exportFilename: 'swipe-extracted-customers',
           onResetTab: resetAllCustomers,
+        };
+      default:
+        return {
+          totalCount: invoices.length,
+          filteredCount: filteredInvoices.length,
+          missingCount: missingInvoices.length,
+          searchQuery: invoiceSearchQuery,
+          setSearchQuery: setInvoiceSearchQuery,
+          exportFilename: 'swipe-extracted-invoices',
+          onResetTab: resetAllInvoices,
         };
     }
   };

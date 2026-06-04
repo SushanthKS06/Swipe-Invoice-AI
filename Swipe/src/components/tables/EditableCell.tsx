@@ -20,6 +20,7 @@ export function EditableCell({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const savedRef = useRef(false);
 
   // Initialize draft when editing is triggered or value changes
   useEffect(() => {
@@ -35,6 +36,8 @@ export function EditableCell({
   }, [editing]);
 
   const handleSave = () => {
+    if (savedRef.current) return;
+    savedRef.current = true;
     let finalValue: string | number | null = draft.trim();
     if (finalValue === '') {
       finalValue = null;
@@ -58,7 +61,7 @@ export function EditableCell({
 
   if (editing) {
     return (
-      <td id={`editable-cell-edit-${fieldName}`} className="px-3 py-1.5 align-middle border-b border-blue-400">
+      <td className="px-3 py-1.5 align-middle border-b border-blue-400">
         <input
           ref={inputRef}
           type={type}
@@ -72,16 +75,19 @@ export function EditableCell({
     );
   }
 
+  const formatFieldName = (name: string): string => {
+    return name.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim();
+  };
+
   if (isMissing) {
     return (
       <td
-        id={`editable-cell-missing-${fieldName}`}
-        onClick={() => setEditing(true)}
+        onDoubleClick={() => { savedRef.current = false; setEditing(true); }}
         className="px-4 py-2.5 align-middle border-b border-slate-100 cursor-pointer bg-amber-50/50 hover:bg-amber-50 transition-colors group"
       >
         <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-amber-200 bg-amber-50 text-amber-700 text-xs font-medium font-sans animate-pulse">
           <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
-          Missing {fieldName}
+          Missing {formatFieldName(fieldName)}
         </span>
       </td>
     );
@@ -91,7 +97,8 @@ export function EditableCell({
   let displayValue = value !== null && value !== undefined ? String(value) : '-';
   
   if (type === 'number') {
-    const numValue = value !== null && value !== undefined ? Number(value) : 0;
+    const numValue = value !== null && value !== undefined ? Number(value) : null;
+    if (numValue === null) return <td className="px-4 py-3 align-middle border-b border-slate-100 text-slate-700 font-sans text-sm">-</td>;
     
     if (fieldName.toLowerCase().includes('percentage') || fieldName.toLowerCase().includes('tax%')) {
       displayValue = `${numValue.toFixed(1)}%`;
@@ -114,15 +121,14 @@ export function EditableCell({
 
   return (
     <td
-      id={`editable-cell-view-${fieldName}`}
-      onDoubleClick={() => setEditing(true)}
+      onDoubleClick={() => { savedRef.current = false; setEditing(true); }}
       className="px-4 py-3 align-middle border-b border-slate-100 text-slate-700 font-sans text-sm cursor-pointer hover:bg-slate-50/70 transition-colors group relative"
       title="Double click to edit cell"
     >
       <span className="group-hover:underline decoration-slate-300 decoration-dotted underline-offset-4">
         {displayValue}
       </span>
-      <span className="absolute right-2 top-3.5 opacity-0 group-hover:opacity-100 text-[10px] text-slate-400 font-sans pointer-events-none transition-opacity">
+      <span className="absolute right-2 top-3.5 opacity-40 sm:opacity-0 sm:group-hover:opacity-100 text-[10px] text-slate-400 font-sans pointer-events-none transition-opacity">
         ✏️
       </span>
     </td>

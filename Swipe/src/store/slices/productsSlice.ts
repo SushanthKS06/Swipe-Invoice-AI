@@ -8,6 +8,8 @@ export function computeProductMissingFields(product: Product): string[] {
     'name',
     'quantity',
     'unitPrice',
+    'tax',
+    'priceWithTax',
   ];
   return fieldsToCheck.filter(f => {
     const val = product[f];
@@ -68,6 +70,12 @@ const productsSlice = createSlice({
       // Recompute missing fields dynamically
       const product = state.entities[action.payload.id];
       if (product) {
+        const { updates } = action.payload;
+        if (('unitPrice' in updates || 'tax' in updates || 'quantity' in updates) && product.unitPrice !== null) {
+          const perUnitTax = (product.tax || 0) / (product.quantity != null && product.quantity !== 0 ? product.quantity : 1);
+          product.priceWithTax = Math.round((product.unitPrice + perUnitTax) * 100) / 100;
+        }
+
         product.missingFields = computeProductMissingFields(product as Product);
       }
     },

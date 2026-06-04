@@ -17,20 +17,20 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
       <table className="w-full table-auto border-collapse text-left min-w-[1200px]">
         <thead>
           <tr className="bg-slate-50/70 border-b border-slate-100">
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-36">Serial Number</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-52">Customer</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-52">Product Name</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-24">Qty</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Unit Price</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Tax Amount</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-28">Tax %</th>
-            {showDiscount && <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Discount</th>}
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Net Amount</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Total Amount</th>
-            {showBalanceDue && <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Balance Due</th>}
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-36">Date</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Confidence</th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-48">Source File</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-36">Serial Number</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-52">Customer Name</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-52">Product Name</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-24">Qty</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Unit Price</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Tax Amount</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-28">Tax %</th>
+            {showDiscount && <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Discount</th>}
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Net Amount</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Total Amount</th>
+            {showBalanceDue && <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Balance Due</th>}
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-36">Date</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-32">Confidence</th>
+            <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 font-sans w-48">Source File</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
