@@ -63,14 +63,17 @@ const productsSlice = createSlice({
       }
     },
     updateProduct(state, action: PayloadAction<{ id: string; updates: Partial<Product> }>) {
+      const { updates } = action.payload;
+      if (updates.tax === null) updates.tax = 0;
+      if (updates.taxPercentage === null) updates.taxPercentage = 0;
+
       productsAdapter.updateOne(state, {
         id: action.payload.id,
-        changes: action.payload.updates,
+        changes: updates,
       });
       // Recompute missing fields dynamically
       const product = state.entities[action.payload.id];
       if (product) {
-        const { updates } = action.payload;
         // Auto-recalculate tax and priceWithTax
         if (('unitPrice' in updates || 'tax' in updates || 'quantity' in updates || 'taxPercentage' in updates) && product.unitPrice !== null) {
           

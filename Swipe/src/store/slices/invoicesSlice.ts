@@ -105,9 +105,13 @@ const invoicesSlice = createSlice({
   reducers: {
     addInvoices: invoicesAdapter.addMany,
     updateInvoice(state, action: PayloadAction<{ id: string; updates: Partial<Invoice> }>) {
+      const { updates } = action.payload;
+      if (updates.taxAmount === null) updates.taxAmount = 0;
+      if (updates.taxPercentage === null) updates.taxPercentage = 0;
+
       invoicesAdapter.updateOne(state, {
         id: action.payload.id,
-        changes: action.payload.updates,
+        changes: updates,
       });
 
       const invoice = state.entities[action.payload.id];
@@ -118,6 +122,8 @@ const invoicesSlice = createSlice({
         ];
         const touchedFinancials = financialFields.some(f => f in action.payload.updates);
         if (touchedFinancials) {
+          if (invoice.taxAmount === null) invoice.taxAmount = 0;
+          if (invoice.taxPercentage === null) invoice.taxPercentage = 0;
           recomputeInvoiceAmounts(invoice as Invoice, action.payload.updates);
         }
 
@@ -145,7 +151,7 @@ const invoicesSlice = createSlice({
             invoice.quantity = quantity;
           }
           if (taxPercentage !== undefined) {
-            invoice.taxPercentage = taxPercentage;
+            invoice.taxPercentage = taxPercentage === null ? 0 : taxPercentage;
           }
           
           const mathNeedsUpdate = unitPrice !== undefined || taxAmount !== undefined || quantity !== undefined || taxPercentage !== undefined;
